@@ -66,13 +66,16 @@ RUN git clone https://gitlab.com/nsnam/ns-3-allinone.git && \
     cd ns-3-allinone && \
     ./download.py -n ns-3.33 && \
     cd ns-3.33 && \
-    ./waf configure --enable-examples --enable-tests && \
+    ./waf configure -d debug --enable-examples --enable-tests && \
     ./waf build
 
-COPY iot_simulation.cpp /ns-3-allinone/ns-3.33/scratch/
+COPY iot_simulation.cc /ns-3-allinone/ns-3.33/scratch/iot_simulation.cc
 
 WORKDIR /ns-3-allinone/ns-3.33/
+RUN ./waf configure -d debug --enable-examples --enable-tests
 RUN ./waf build
+
+RUN pwd
 
 ENV TZ=America/New_York
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
