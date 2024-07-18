@@ -3,7 +3,7 @@ services:
         build: .
         container_name: ns3_simulation
         volumes:
-            - ./iot_simulation.cpp:/ns-3-allinone/ns-3.33/scratch/iot_simulation.cpp
+            - ./iot_simulation.cc:/ns-3-allinone/ns-3.33/scratch/iot_simulation.cc
         command: ./waf --run scratch/iot_simulation
         ports:
-            - "5008:5000"
+            - "5008:5008"
