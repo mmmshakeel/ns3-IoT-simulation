@@ -7,3 +7,4 @@ services:
         command: ./waf --run scratch/iot_simulation && tail -f /dev/null
         ports:
             - "5008:5008"
+            - "6000:6000"

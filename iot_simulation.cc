@@ -54,6 +54,7 @@ void ListenForCommands() {
         read(new_socket, buffer, 1024);
         std::string command(buffer);
         if (command.find("start_ddos") != std::string::npos) {
+            std::cout << "Received command: start_ddos" << std::endl;
             attackTriggered.store(true);
         }
         close(new_socket);
@@ -62,6 +63,7 @@ void ListenForCommands() {
 
 void CheckAttackTrigger(Ptr<Node> attackNode, Ipv4Address targetAddr, uint16_t port) {
     if (attackTriggered.load()) {
+        std::cout << "DDoS attack triggered" << std::endl;
         // Install multiple UDP clients to simulate DDoS attack
         for (int i = 0; i < 50; ++i) {
             UdpEchoClientHelper attackClient(targetAddr, port);
