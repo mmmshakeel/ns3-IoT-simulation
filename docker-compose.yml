@@ -4,6 +4,7 @@ services:
         container_name: ns3_simulation
         volumes:
             - ./iot_simulation.cc:/ns-3-allinone/ns-3.33/scratch/iot_simulation.cc
+            - ./traffic_data:/var/traffic_data
         command: ./waf --run scratch/iot_simulation && tail -f /dev/null
         ports:
             - "5008:5008"

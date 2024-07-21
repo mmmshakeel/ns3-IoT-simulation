@@ -3,6 +3,7 @@
 #include "ns3/internet-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/applications-module.h"
+#include "ns3/pcap-file.h"
 #include <thread>
 #include <atomic>
 #include <sys/types.h>
@@ -54,8 +55,8 @@ void ListenForCommands() {
         read(new_socket, buffer, 1024);
         std::string command(buffer);
         if (command.find("start_ddos") != std::string::npos) {
-            std::cout << "Received command: start_ddos" << std::endl;
             attackTriggered.store(true);
+            std::cout << "DDoS attack triggered!" << std::endl;
         }
         close(new_socket);
     }
@@ -63,12 +64,12 @@ void ListenForCommands() {
 
 void CheckAttackTrigger(Ptr<Node> attackNode, Ipv4Address targetAddr, uint16_t port) {
     if (attackTriggered.load()) {
-        std::cout << "DDoS attack triggered" << std::endl;
+        std::cout << "Launching DDoS attack..." << std::endl;
         // Install multiple UDP clients to simulate DDoS attack
         for (int i = 0; i < 50; ++i) {
             UdpEchoClientHelper attackClient(targetAddr, port);
             attackClient.SetAttribute("MaxPackets", UintegerValue(1000000));
-            attackClient.SetAttribute("Interval", TimeValue(Seconds(0.01))); // More frequent packets
+            attackClient.SetAttribute("Interval", TimeValue(Seconds(0.001))); // More frequent packets
             attackClient.SetAttribute("PacketSize", UintegerValue(1024));
 
             ApplicationContainer clientApps = attackClient.Install(attackNode);
@@ -127,6 +128,9 @@ int main(int argc, char *argv[]) {
     ApplicationContainer clientApps = echoClient.Install(nodes.Get(0));
     clientApps.Start(Seconds(2.0));
     clientApps.Stop(Seconds(100.0));
+
+    // Enable pcap tracing
+    pointToPoint.EnablePcapAll("/var/traffic_data/capture");
 
     // Start the command listener in a separate thread
     std::thread commandListener(ListenForCommands);

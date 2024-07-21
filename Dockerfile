@@ -75,7 +75,7 @@ WORKDIR /ns-3-allinone/ns-3.33/
 RUN ./waf configure -d debug --enable-examples --enable-tests
 RUN ./waf build
 
-RUN pwd
+RUN mkdir /var/traffic_data
 
 ENV TZ=America/New_York
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
